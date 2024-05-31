@@ -70,11 +70,11 @@ This documentation assumes that you have already started a [Django project](http
     If the Bokeh ``resources`` setting is set to ``server`` then we must add the location of the Bokeh resources to the ``STATICFILES_DIRS`` setting:
    
     ```python
-    from bokeh.settings import settings as bokeh_settings, bokehjsdir
+    from bokeh.settings import settings as bokeh_settings, bokehjs_path
    
     STATICFILES_DIRS = [
         ...,
-        bokehjsdir(),
+        bokehjs_path(),
     ]
     ```
    

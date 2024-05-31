@@ -10,7 +10,8 @@
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
-import logging # isort:skip
+import logging  # isort:skip
+
 log = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
@@ -35,6 +36,7 @@ from bokeh.embed.bundle import extension_dirs
 # General API
 # -----------------------------------------------------------------------------
 
+
 class BokehExtensionFinder(BaseFinder):
     """
     A custom staticfiles finder class to find bokeh resources.
@@ -43,8 +45,9 @@ class BokehExtensionFinder(BaseFinder):
         When using `django.contrib.staticfiles' in `INSTALLED_APPS` then add
         `bokeh_django.static.BokehExtensionFinder` to `STATICFILES_FINDERS`
     """
+
     _root = extension_dirs
-    _prefix = 'extensions/'
+    _prefix = "extensions/"
 
     def find(self, path, all=False):
         """
@@ -63,6 +66,17 @@ class BokehExtensionFinder(BaseFinder):
 
         return matches
 
+    def list(self, ignore_patterns, prefix=None):
+        """
+        Lists all available static files from Bokeh extensions.
+        """
+        for name, root in self._root.items():
+            if prefix and not name.startswith(prefix):
+                continue
+            for dirpath, _, filenames in os.walk(root):
+                for filename in filenames:
+                    yield os.path.join(dirpath, filename), safe_join(root, filename)
+
     @classmethod
     def find_location(cls, path, prefix=None, as_components=False):
         """
@@ -74,9 +88,9 @@ class BokehExtensionFinder(BaseFinder):
             as_components (bool): If `True` return tuple of (artifacts_dir, artifact_path) rather than absolute path.
                 Used when needing seperate components for `static.serve` function to manually serve resources.
         """
-        prefix = prefix or ''
+        prefix = prefix or ""
         if not prefix or path.startswith(prefix):
-            path = path[len(prefix):]
+            path = path[len(prefix) :]
             try:
                 name, artifact_path = path.split(os.sep, 1)
             except ValueError:
@@ -101,7 +115,10 @@ def serve_extensions(request, path):
 
 
 def static_extensions(prefix: str = "/static/extensions/"):
-    return [re_path(r'^%s(?P<path>.*)$' % re.escape(prefix.lstrip('/')), serve_extensions)]
+    return [
+        re_path(r"^%s(?P<path>.*)$" % re.escape(prefix.lstrip("/")), serve_extensions)
+    ]
+
 
 # -----------------------------------------------------------------------------
 # Dev API
